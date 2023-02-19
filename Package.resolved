@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "bigint",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/attaswift/BigInt.git",
+      "state" : {
+        "revision" : "0ed110f7555c34ff468e72e1686e59721f2b0da6",
+        "version" : "5.3.0"
+      }
+    },
+    {
+      "identity" : "cryptoswiftwrapper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/CryptoSwiftWrapper.git",
+      "state" : {
+        "revision" : "0d57e806de368b5d2364fabb7c789b48661ec90c",
+        "version" : "1.4.3"
+      }
+    }
+  ],
+  "version" : 2
+}

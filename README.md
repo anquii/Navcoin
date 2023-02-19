@@ -4,7 +4,7 @@
 [![Swift Package Manager compatible](https://img.shields.io/badge/SPM-compatible-orange)](#swift-package-manager)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/anquii/Navcoin/blob/main/LICENSE)
 
-An implementation to interact with [Navcoin](https://github.com/navcoin/navcoin) in Swift.
+An implementation to interact with [Navcoin](https://navcoin.org)'s upcoming [PePoS](https://medium.com/nav-coin/announcing-pepos-a-privacy-enhanced-proof-of-stake-protocol-95c3149e8bd6) protocol in Swift.
 
 ## Platforms
 - macOS 11+
@@ -16,7 +16,7 @@ An implementation to interact with [Navcoin](https://github.com/navcoin/navcoin)
 
 Add the following line to your `Package.swift` file:
 ```swift
-.package(url: "https://github.com/anquii/Navcoin.git", from: "1.0.0")
+.package(url: "https://github.com/anquii/Navcoin.git", from: "0.1.0")
 ```
 ...or integrate with Xcode via `File -> Swift Packages -> Add Package Dependency...` using the URL of the repository.
 
@@ -24,6 +24,12 @@ Add the following line to your `Package.swift` file:
 
 ```swift
 import Navcoin
+
+let transactionSerializer = TransactionSerializer()
+let data = transactionSerializer.data(transaction: transaction)
+
+let transactionDeserializer = TransactionDeserializer()
+let transaction = transactionDeserializer.transaction(data: data)
 ```
 
 ## License
