@@ -1,13 +1,12 @@
 import Foundation
 import BigInt
+import BLSCT
 
 public protocol TransactionDeserializing {
     func transaction(data: Data) -> Transaction?
 }
 
 public final class TransactionDeserializer: TransactionDeserializing {
-    public init() {}
-
     public func transaction(data: Data) -> Transaction? {
         do {
             return try transactionThrows(data: data)
@@ -18,6 +17,7 @@ public final class TransactionDeserializer: TransactionDeserializing {
             preconditionFailure()
         }
     }
+    public init() {}
 }
 
 extension TransactionDeserializer {
@@ -87,7 +87,7 @@ extension TransactionDeserializer {
             guard let indexData = dataSlice(nextByteCount: 4), let index = UInt32(data: indexData) else {
                 throw TransactionDeserializerOutpointError.noIndex
             }
-            let outpoint = Outpoint(id: id, index: index)
+            let outpoint = TransactionOutpoint(id: id, index: index)
             guard setNextVectorLength() else {
                 throw TransactionDeserializerInputError.invalidScriptSignature
             }
@@ -129,9 +129,9 @@ extension TransactionDeserializer {
             }
             let publicScriptKey = dataSlice(nextByteCount: nextVectorLength)
             var rangeProof: RangeProof?
-            var publicBLSSpendKey: Data?
-            var publicBLSBlindKey: Data?
-            var publicBLSEphemeralKey: Data?
+            var publicSpendKey: Data?
+            var publicBlindKey: Data?
+            var publicEphemeralKey: Data?
             var viewTag: UInt16?
             if (outputFlags & 0x01) != 0 {
                 var Vs = [Data]()
@@ -192,18 +192,18 @@ extension TransactionDeserializer {
                     throw TransactionDeserializerRangeProofError.noField_t
                 }
                 rangeProof = RangeProof(Vs: Vs, Ls: Ls, Rs: Rs, A: A, S: S, T1: T1, T2: T2, taux: taux, mu: mu, a: a, b: b, t: t)
-                guard let _publicBLSSpendKey = dataSlice(nextByteCount: 48) else {
-                    throw TransactionDeserializerOutputError.noPublicBLSSpendKey
+                guard let _publicSpendKey = dataSlice(nextByteCount: 48) else {
+                    throw TransactionDeserializerOutputError.noPublicSpendKey
                 }
-                publicBLSSpendKey = _publicBLSSpendKey
-                guard let _publicBLSBlindKey = dataSlice(nextByteCount: 48) else {
-                    throw TransactionDeserializerOutputError.noPublicBLSBlindKey
+                publicSpendKey = _publicSpendKey
+                guard let _publicBlindKey = dataSlice(nextByteCount: 48) else {
+                    throw TransactionDeserializerOutputError.noPublicBlindKey
                 }
-                publicBLSBlindKey = _publicBLSBlindKey
-                guard let _publicBLSEphemeralKey = dataSlice(nextByteCount: 48) else {
-                    throw TransactionDeserializerOutputError.noPublicBLSEphemeralKey
+                publicBlindKey = _publicBlindKey
+                guard let _publicEphemeralKey = dataSlice(nextByteCount: 48) else {
+                    throw TransactionDeserializerOutputError.noPublicEphemeralKey
                 }
-                publicBLSEphemeralKey = _publicBLSEphemeralKey
+                publicEphemeralKey = _publicEphemeralKey
                 guard let viewTagData = dataSlice(nextByteCount: 2), let _viewTag = UInt16(data: viewTagData) else {
                     throw TransactionDeserializerOutputError.noViewTag
                 }
@@ -211,22 +211,25 @@ extension TransactionDeserializer {
             }
             var tokenIdentifier: TokenIdentifier?
             if (outputFlags & 0x02) != 0 {
-                guard let idData = dataSlice(nextByteCount: 32) else {
-                    throw TransactionDeserializerTokenIdentifierError.noId
+                guard let fungibleTokenIdentifierData = dataSlice(nextByteCount: 32) else {
+                    throw TransactionDeserializerTokenIdentifierError.noFungibleTokenIdentifier
                 }
-                let id = BigUInt(idData)
-                guard let nftIdData = dataSlice(nextByteCount: 8), let nftId = UInt64(data: nftIdData) else {
-                    throw TransactionDeserializerTokenIdentifierError.noNftId
+                let fungibleTokenIdentifier = BigUInt(fungibleTokenIdentifierData)
+                guard
+                    let nonFungibleTokenIdentifierData = dataSlice(nextByteCount: 8),
+                    let nonFungibleTokenIdentifier = UInt64(data: nonFungibleTokenIdentifierData)
+                else {
+                    throw TransactionDeserializerTokenIdentifierError.noNonFungibleTokenIdentifier
                 }
-                tokenIdentifier = TokenIdentifier(id: id, nftId: nftId)
+                tokenIdentifier = TokenIdentifier(fungibleTokenIdentifier: fungibleTokenIdentifier, nonFungibleTokenIdentifier: nonFungibleTokenIdentifier)
             }
             let output = TransactionOutput(
                 value: value,
                 publicScriptKey: publicScriptKey,
                 rangeProof: rangeProof,
-                publicBLSSpendKey: publicBLSSpendKey,
-                publicBLSBlindKey: publicBLSBlindKey,
-                publicBLSEphemeralKey: publicBLSEphemeralKey,
+                publicSpendKey: publicSpendKey,
+                publicBlindKey: publicBlindKey,
+                publicEphemeralKey: publicEphemeralKey,
                 viewTag: viewTag,
                 tokenIdentifier: tokenIdentifier
             )
@@ -266,13 +269,6 @@ extension TransactionDeserializer {
             }
             signature = _signature
         }
-        return Transaction(
-            version: version,
-            inputs: inputs,
-            outputs: outputs,
-            witnesses: witnesses,
-            signature: signature,
-            lockTime: lockTime
-        )
+        return Transaction(version: version, inputs: inputs, outputs: outputs, witnesses: witnesses, signature: signature, lockTime: lockTime)
     }
 }

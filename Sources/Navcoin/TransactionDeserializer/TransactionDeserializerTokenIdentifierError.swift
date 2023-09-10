@@ -1,15 +1,15 @@
 enum TransactionDeserializerTokenIdentifierError: Error {
-    case noId
-    case noNftId
+    case noFungibleTokenIdentifier
+    case noNonFungibleTokenIdentifier
 }
 
 extension TransactionDeserializerTokenIdentifierError: ErrorDescribing {
     var description: String {
         switch self {
-        case .noId:
-            return "No field `id` in `TokenIdentifier` data"
-        case .noNftId:
-            return "No field `nftId` in `TokenIdentifier` data"
+        case .noFungibleTokenIdentifier:
+            return "No field `fungibleTokenIdentifier` in `TokenIdentifier` data"
+        case .noNonFungibleTokenIdentifier:
+            return "No field `nonFungibleTokenIdentifier` in `TokenIdentifier` data"
         }
     }
 }

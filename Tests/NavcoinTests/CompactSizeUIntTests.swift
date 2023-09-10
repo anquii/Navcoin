@@ -1,4 +1,6 @@
 import XCTest
+import Foundation
+import BinaryExtensions
 @testable import Navcoin
 
 final class CompactSizeUIntTests: XCTestCase {

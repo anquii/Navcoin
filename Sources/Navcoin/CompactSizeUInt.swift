@@ -1,4 +1,5 @@
 import Foundation
+import BinaryExtensions
 
 struct CompactSizeUInt {
     let value: UInt

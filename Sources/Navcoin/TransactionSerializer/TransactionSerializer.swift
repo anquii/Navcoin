@@ -1,12 +1,12 @@
 import Foundation
+import BigIntExtensions
+import BinaryExtensions
 
 public protocol TransactionSerializing {
     func data(transaction: Transaction) -> Data
 }
 
 public struct TransactionSerializer: TransactionSerializing {
-    public init() {}
-
     public func data(transaction: Transaction) -> Data {
         do {
             return try dataThrows(transaction: transaction)
@@ -16,6 +16,7 @@ public struct TransactionSerializer: TransactionSerializing {
             preconditionFailure()
         }
     }
+    public init() {}
 }
 
 extension TransactionSerializer {
@@ -33,7 +34,7 @@ extension TransactionSerializer {
         data += CompactSizeUInt(transaction.inputs?.count ?? 0).bytes
         if let inputs = transaction.inputs {
             for input in inputs {
-                data += input.outpoint.id.serialized(requiredLength: 32)
+                data += Data(unsignedInteger: input.outpoint.id, minimumLength: 32)
                 data += input.outpoint.index.bytes
                 data += CompactSizeUInt(input.scriptSignature?.count ?? 0).bytes
                 if let scriptSignature = input.scriptSignature {
@@ -89,18 +90,18 @@ extension TransactionSerializer {
                 data += rangeProof.a
                 data += rangeProof.b
                 data += rangeProof.t
-                guard let publicBLSSpendKey = output.publicBLSSpendKey else {
-                    throw TransactionSerializerOutputError.noPublicBLSSpendKey
+                guard let publicSpendKey = output.publicSpendKey else {
+                    throw TransactionSerializerOutputError.noPublicSpendKey
                 }
-                data += publicBLSSpendKey
-                guard let publicBLSBlindKey = output.publicBLSBlindKey else {
-                    throw TransactionSerializerOutputError.noPublicBLSBlindKey
+                data += publicSpendKey
+                guard let publicBlindKey = output.publicBlindKey else {
+                    throw TransactionSerializerOutputError.noPublicBlindKey
                 }
-                data += publicBLSBlindKey
-                guard let publicBLSEphemeralKey = output.publicBLSEphemeralKey else {
-                    throw TransactionSerializerOutputError.noPublicBLSEphemeralKey
+                data += publicBlindKey
+                guard let publicEphemeralKey = output.publicEphemeralKey else {
+                    throw TransactionSerializerOutputError.noPublicEphemeralKey
                 }
-                data += publicBLSEphemeralKey
+                data += publicEphemeralKey
                 guard let viewTag = output.viewTag else {
                     throw TransactionSerializerOutputError.noViewTag
                 }
@@ -110,8 +111,8 @@ extension TransactionSerializer {
                 guard let tokenIdentifier = output.tokenIdentifier else {
                     preconditionFailure()
                 }
-                data += tokenIdentifier.id.serialized(requiredLength: 32)
-                data += tokenIdentifier.nftId.bytes
+                data += Data(unsignedInteger: tokenIdentifier.fungibleTokenIdentifier, minimumLength: 32)
+                data += tokenIdentifier.nonFungibleTokenIdentifier.bytes
             }
         }
         // MARK: - Witnesses

@@ -1,6 +1,6 @@
 import BigInt
 
-public struct Outpoint {
+public struct TransactionOutpoint {
     public let id: BigUInt
     public let index: UInt32
 

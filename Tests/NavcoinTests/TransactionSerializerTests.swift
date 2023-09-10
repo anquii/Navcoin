@@ -1,4 +1,7 @@
 import XCTest
+import Foundation
+import BinaryExtensions
+import BLSCT
 @testable import Navcoin
 
 final class TransactionSerializerTests: XCTestCase {
@@ -9,53 +12,53 @@ final class TransactionSerializerTests: XCTestCase {
     }
 
     func testGivenNonSegWitTransaction_WhenSerialize_ThenAssertEqual() {
-        let serializedData = Data(hex: RawTransactions.hexEncodedNonSegWit)
+        let serializedData = Data(hexEncodedString: RawTransactions.hexEncodedNonSegWit)!
         let transaction = deserializer.transaction(data: serializedData)!
         let serializedData2 = sut().data(transaction: transaction)
         XCTAssertEqual(serializedData2, serializedData)
     }
 
     func testGivenSegWitTransaction_WhenSerialize_ThenAssertEqual() {
-        let serializedData = Data(hex: RawTransactions.hexEncodedSegWit)
+        let serializedData = Data(hexEncodedString: RawTransactions.hexEncodedSegWit)!
         let transaction = deserializer.transaction(data: serializedData)!
         let serializedData2 = sut().data(transaction: transaction)
         XCTAssertEqual(serializedData2, serializedData)
     }
 
     func testGivenVersionValid_AndSignatureNil_WhenSerializeTransaction_ThenThrowError() {
-        let transaction = self.transaction(version: 32, signature: nil)
+        let transaction = transaction(version: 32, signature: nil)
         XCTAssertThrowsError(try sut().dataThrows(transaction: transaction)) {
             XCTAssertEqual($0 as? TransactionSerializerError, .noSignature)
         }
     }
 
-    func testGivenOutput_AndValueInt64Max_AndPublicBLSSpendKeyNil_WhenSerializeTransaction_ThenThrowError() {
-        let output = transactionOutput(value: Int64.max, rangeProof: mockRangeProof(), publicBLSSpendKey: nil)
-        let transaction = self.transaction(outputs: [output])
+    func testGivenOutput_AndValueInt64Max_AndPublicSpendKeyNil_WhenSerializeTransaction_ThenThrowError() {
+        let output = transactionOutput(value: Int64.max, rangeProof: mockRangeProof(), publicSpendKey: nil)
+        let transaction = transaction(outputs: [output])
         XCTAssertThrowsError(try sut().dataThrows(transaction: transaction)) {
-            XCTAssertEqual($0 as? TransactionSerializerOutputError, .noPublicBLSSpendKey)
+            XCTAssertEqual($0 as? TransactionSerializerOutputError, .noPublicSpendKey)
         }
     }
 
-    func testGivenOutput_AndValueInt64Max_AndPublicBLSBlindKeyNil_WhenSerializeTransaction_ThenThrowError() {
-        let output = transactionOutput(value: Int64.max, rangeProof: mockRangeProof(), publicBLSSpendKey: Data(), publicBLSBlindKey: nil)
-        let transaction = self.transaction(outputs: [output])
+    func testGivenOutput_AndValueInt64Max_AndPublicBlindKeyNil_WhenSerializeTransaction_ThenThrowError() {
+        let output = transactionOutput(value: Int64.max, rangeProof: mockRangeProof(), publicSpendKey: Data(), publicBlindKey: nil)
+        let transaction = transaction(outputs: [output])
         XCTAssertThrowsError(try sut().dataThrows(transaction: transaction)) {
-            XCTAssertEqual($0 as? TransactionSerializerOutputError, .noPublicBLSBlindKey)
+            XCTAssertEqual($0 as? TransactionSerializerOutputError, .noPublicBlindKey)
         }
     }
 
-    func testGivenOutput_AndValueInt64Max_AndPublicBLSEphemeralKeyNil_WhenSerializeTransaction_ThenThrowError() {
+    func testGivenOutput_AndValueInt64Max_AndPublicEphemeralKeyNil_WhenSerializeTransaction_ThenThrowError() {
         let output = transactionOutput(
             value: Int64.max,
             rangeProof: mockRangeProof(),
-            publicBLSSpendKey: Data(),
-            publicBLSBlindKey: Data(),
-            publicBLSEphemeralKey: nil
+            publicSpendKey: Data(),
+            publicBlindKey: Data(),
+            publicEphemeralKey: nil
         )
-        let transaction = self.transaction(outputs: [output])
+        let transaction = transaction(outputs: [output])
         XCTAssertThrowsError(try sut().dataThrows(transaction: transaction)) {
-            XCTAssertEqual($0 as? TransactionSerializerOutputError, .noPublicBLSEphemeralKey)
+            XCTAssertEqual($0 as? TransactionSerializerOutputError, .noPublicEphemeralKey)
         }
     }
 
@@ -63,12 +66,12 @@ final class TransactionSerializerTests: XCTestCase {
         let output = transactionOutput(
             value: Int64.max,
             rangeProof: mockRangeProof(),
-            publicBLSSpendKey: Data(),
-            publicBLSBlindKey: Data(),
-            publicBLSEphemeralKey: Data(),
+            publicSpendKey: Data(),
+            publicBlindKey: Data(),
+            publicEphemeralKey: Data(),
             viewTag: nil
         )
-        let transaction = self.transaction(outputs: [output])
+        let transaction = transaction(outputs: [output])
         XCTAssertThrowsError(try sut().dataThrows(transaction: transaction)) {
             XCTAssertEqual($0 as? TransactionSerializerOutputError, .noViewTag)
         }
@@ -98,9 +101,9 @@ fileprivate extension TransactionSerializerTests {
         value: Int64 = 0,
         publicScriptKey: Data? = nil,
         rangeProof: RangeProof? = nil,
-        publicBLSSpendKey: Data? = nil,
-        publicBLSBlindKey: Data? = nil,
-        publicBLSEphemeralKey: Data? = nil,
+        publicSpendKey: Data? = nil,
+        publicBlindKey: Data? = nil,
+        publicEphemeralKey: Data? = nil,
         viewTag: UInt16? = nil,
         tokenIdentifier: TokenIdentifier? = nil
     ) -> TransactionOutput {
@@ -108,9 +111,9 @@ fileprivate extension TransactionSerializerTests {
             value: value,
             publicScriptKey: publicScriptKey,
             rangeProof: rangeProof,
-            publicBLSSpendKey: publicBLSSpendKey,
-            publicBLSBlindKey: publicBLSBlindKey,
-            publicBLSEphemeralKey: publicBLSEphemeralKey,
+            publicSpendKey: publicSpendKey,
+            publicBlindKey: publicBlindKey,
+            publicEphemeralKey: publicEphemeralKey,
             viewTag: viewTag,
             tokenIdentifier: tokenIdentifier
         )

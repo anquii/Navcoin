@@ -9,32 +9,16 @@ let package = Package(
         .iOS(.v14)
     ],
     products: [
-        .library(
-            name: "Navcoin",
-            targets: ["Navcoin"]
-        )
+        .library(name: "Navcoin", targets: ["Navcoin"])
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/attaswift/BigInt.git",
-            .upToNextMajor(from: "5.3.0")
-        ),
-        .package(
-            url: "https://github.com/anquii/CryptoSwiftWrapper.git",
-            .upToNextMajor(from: "1.4.3")
-        )
+        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
+        .package(url: "https://github.com/anquii/BigIntExtensions.git", exact: "0.1.0"),
+        .package(url: "https://github.com/anquii/BinaryExtensions.git", exact: "0.1.1"),
+        .package(url: "https://github.com/anquii/BLSCT.git", branch: "release/v0.2.0")
     ],
     targets: [
-        .target(
-            name: "Navcoin",
-            dependencies: [
-                "BigInt",
-                "CryptoSwiftWrapper"
-            ]
-        ),
-        .testTarget(
-            name: "NavcoinTests",
-            dependencies: ["Navcoin"]
-        )
+        .target(name: "Navcoin", dependencies: ["BigInt", "BigIntExtensions", "BinaryExtensions", "BLSCT"]),
+        .testTarget(name: "NavcoinTests", dependencies: ["Navcoin"])
     ]
 )

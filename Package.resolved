@@ -1,6 +1,24 @@
 {
   "pins" : [
     {
+      "identity" : "base58",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/Base58.git",
+      "state" : {
+        "revision" : "7e4a1e4e6813c750ed2f9e80a0494c608eebb2ca",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "base58check",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/Base58Check.git",
+      "state" : {
+        "revision" : "f35a770ff7f3fd553cc44057f492c0107cc7b481",
+        "version" : "1.0.1"
+      }
+    },
+    {
       "identity" : "bigint",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/attaswift/BigInt.git",
@@ -10,12 +28,66 @@
       }
     },
     {
-      "identity" : "cryptoswiftwrapper",
+      "identity" : "bigintextensions",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/anquii/CryptoSwiftWrapper.git",
+      "location" : "https://github.com/anquii/BigIntExtensions.git",
       "state" : {
-        "revision" : "0d57e806de368b5d2364fabb7c789b48661ec90c",
-        "version" : "1.4.3"
+        "revision" : "1d960373cc9817e0949ab7c7d7719b62bcaf09c7",
+        "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "binaryextensions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/BinaryExtensions.git",
+      "state" : {
+        "revision" : "ab9c034ab6d6a578fa0e574ef8c1b8d117b8bfc9",
+        "version" : "0.1.1"
+      }
+    },
+    {
+      "identity" : "blsct",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/BLSCT.git",
+      "state" : {
+        "branch" : "release/v0.2.0",
+        "revision" : "3fa4cddc716e0afac7636494dfa32495f6ea8abb"
+      }
+    },
+    {
+      "identity" : "blsswiftwrapper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/BLSSwiftWrapper.git",
+      "state" : {
+        "revision" : "7e64d544816711578ae3fa81a009279ee57a6e7f",
+        "version" : "1.24.0"
+      }
+    },
+    {
+      "identity" : "erc2333",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/ERC2333.git",
+      "state" : {
+        "revision" : "4aa455e6251fc28ac17864255cfb2e8e43fbd178",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "mclswiftwrapper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/MCLSwiftWrapper.git",
+      "state" : {
+        "revision" : "930124008ae3c156de3e73eb8c5748c6d5a482c6",
+        "version" : "1.61.0"
+      }
+    },
+    {
+      "identity" : "ripemd160",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/RIPEMD160.git",
+      "state" : {
+        "revision" : "15679c6fe1f3ae32ec1bad63bcc45aa422954f01",
+        "version" : "1.0.0"
       }
     }
   ],
